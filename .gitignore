@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+*.zip
+*.docx
+*.png
+*.exe
+/exiftool_files/
+venv/
+.env
