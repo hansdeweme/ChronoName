@@ -1,9 +1,44 @@
+# Python bytecode and caches
 __pycache__/
-*.pyc
-*.zip
-*.docx
-*.png
-*.exe
-/exiftool_files/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+
+# Virtual environments and local secrets
+.venv/
 venv/
+env/
 .env
+.env.*
+!.env.example
+
+# Packaging and PyInstaller build output (keep .spec build recipes)
+build/
+dist/
+*.egg-info/
+*.egg
+.eggs/
+
+# Editor and operating-system files
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Generated source exports, logs, and local reports
+/chrononame-combined_code.txt
+*.log
+rename_log_*.json
+ChronoName Reports/
+.quarantine/
+
+# Keep bundled ExifTool and the recovered source ZIP in the backup.

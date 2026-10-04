@@ -1,0 +1,40 @@
+{
+  "app_name": "ChronoName",
+  "default_source_folder": "",
+  "default_output_folder": "",
+  "staging_folder": "ChronoName Intake",
+  "name_timezone": "Europe/Amsterdam",
+  "include_device": false,
+  "dry_run_by_default": true,
+  "whatsapp_sent_folder": ".\\wa_sent",
+  "whatsapp_received_folder": ".\\wa_received",
+  "Gallery_Attachments": ".\\wa_sent\\attachments",
+  "In_App_Camera": ".\\wa_sent\\in_app",
+  "Unclassified_or_Cropped": ".\\wa_sent\\unclassified",
+  "Received": ".\\wa_received",
+  "supported_extensions": [
+    "jpg",
+    "jpeg",
+    "heic",
+    "png",
+    "dng",
+    "cr2",
+    "cr3",
+    "arw",
+    "nef",
+    "raf",
+    "mp4",
+    "mov",
+    "m4v"
+  ],
+  "filing_audit": {
+    "tolerance_days": 1,
+    "cross_year_forward_days": 14,
+    "ignored_folder_names": [
+      "edits",
+      "exports",
+      "scans"
+    ]
+  }
+}
+
