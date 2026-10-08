@@ -3,14 +3,15 @@
 # Licensed under the MIT License (https://opensource.org/licenses/MIT).
 # part of the ChronoName Project
 #
-#  wrapper for DedupTool engine
+#  application adapter for HdWDedupEngine
 #
 
 from __future__ import annotations
 import copy
+import os
 from pathlib import Path
 # local imports
-from deduptool import DedupConfig, DedupEngine, load_settings, write_csv, write_html, execute_moves
+from hdw_dedup_engine import DedupConfig, DedupEngine, load_settings, write_csv, write_html, execute_moves
 from models import DuplicateOptions, DuplicateResult
 from report_paths import report_dir_for, report_path, report_timestamp, REPORTS_FOLDER_NAME
 
@@ -51,20 +52,18 @@ def run_duplicate_detection(options: DuplicateOptions) -> DuplicateResult:
         if options.progress_callback:
             options.progress_callback(phase, done, total, phase)
 
-    def move_progress(done: int) -> None:
+    def move_progress(percent: int) -> None:
         _raise_if_cancelled(options)
-
-        total = len(summary.get("to_drop", []))
 
         if options.progress_callback:
             options.progress_callback(
                 "moving",
-                done,
-                total,
+                percent,
+                100,
                 "moving duplicate files",
             )
 
-    engine = DedupEngine(cfg, log=log, progress=progress)
+    engine = DedupEngine(cfg, log=log, progress=progress, cancel=options.cancel_callback)
     engine.settings = build_duplicate_scan_settings(options, report_dir)
     _raise_if_cancelled(options)
     summary = engine.plan(roots)
@@ -129,9 +128,17 @@ def build_duplicate_scan_settings(options: DuplicateOptions, report_dir: Path) -
         exclude_names.append(REPORTS_FOLDER_NAME)
     if QUARANTINE_FOLDER_NAME not in exclude_names:
         exclude_names.append(QUARANTINE_FOLDER_NAME)
-    configured_excludes = scan_settings.setdefault("exclude_dirpaths", [])
-    configured_excludes.append(str(report_dir.resolve()))
-    if options.exclude_dirs:
-        configured_excludes.extend(str(path.resolve()) for path in options.exclude_dirs)
+    # The engine compares normalized paths; keep report ownership in ChronoName.
+    normalized_report_dir = os.path.normcase(str(report_dir.resolve()))
+    settings.setdefault("reports", {})["base_dir"] = normalized_report_dir
+    cache = settings.setdefault("cache", {})
+    if cache.get("thumbs_dir"):
+        cache["thumbs_dir"] = str(report_dir.resolve() / "thumbs")
+    configured_excludes = scan_settings.setdefault("exclude_roots", [])
+    configured_excludes.extend(scan_settings.get("exclude_dirpaths", []))
+    configured_excludes.append(normalized_report_dir)
+    excluded_paths = list(options.exclude_dirs)
+    if options.quarantine_dir:
+        excluded_paths.append(options.quarantine_dir)
+    configured_excludes.extend(os.path.normcase(str(path.resolve())) for path in excluded_paths)
     return settings
-

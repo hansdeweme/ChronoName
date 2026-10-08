@@ -6,7 +6,8 @@ with open("chrononame-combined_code.txt", "w", encoding="utf-8") as output_file:
                      "config.py", 
                      "duplicate_core.py", 
                      "exiftool_adapter.py", 
-                     "find_duplicates.py", 
+                     "diagnostics_core.py",
+                     "filing_audit.py",
                      "main.py", 
                      "models.py", 
                      "report_paths.py", 
@@ -20,4 +21,4 @@ with open("chrononame-combined_code.txt", "w", encoding="utf-8") as output_file:
             content = input_file.read()
             output_file.write(f"--- Start of {filename} ---\n")
             output_file.write(content)
-            output_file.write(f"\n--- End of {filename} ---\n\n")   
+            output_file.write(f"\n--- End of {filename} ---\n\n")

@@ -101,7 +101,7 @@ Duplicate analysis is report-only by default. It produces CSV/HTML reports witho
 
 After reviewing the duplicate report, **Workflow > Quarantine Duplicate Files** can be used to move the files marked `DUPLICATE` into a local `.quarantine` folder inside the selected source folder. This keeps the operation non-destructive: duplicates leave the active folder tree but remain available for manual inspection or recovery.
 
-Duplicate detection is provided by the shared deduptool package rather than a ChronoName-specific copy of the duplicate engine. Matching, clustering, keeper selection, reporting and quarantine therefore use the same implementation as DedupTool itself.
+Duplicate detection uses the installed `hdw-dedup-engine` 0.1.0 package (`hdw_dedup_engine`), shared with DedupTool. ChronoName owns its reports and quarantine paths and does not use an IndexDB.
 
 Near-duplicate matching no longer accepts dHash alone; pHash and wHash are also used to corroborate perceptual matches.
 
@@ -124,7 +124,31 @@ ChronoName uses ExifTool for metadata extraction. The download package includes 
 
 Runtime Python packages used by the current app include PyQt6, Pillow, pillow-heif, and the scientific/image stack used by duplicate detection where available.
 
-Requirements are installed by: py -3 -m pip install -r requirements.txt 
+Install the local engine first; it is not assumed to be published on PyPI:
+
+```powershell
+py -3 -m pip install -e D:\Coding\HdWDedupEngine
+py -3 -m pip install -r requirements.txt
+```
+
+A locally built engine wheel can replace the editable installation. No DedupTool
+checkout or global PYTHONPATH is required.
+
+## Tests, diagnostics and Windows build
+
+```powershell
+py -3 -m pytest -q
+py -3 -m unittest discover -v
+py -3 -c "from diagnostics_core import run_core_diagnostics; print(run_core_diagnostics().to_text())"
+py -3 -m pip install pyinstaller
+.\run_pyinstaller.cmd
+```
+
+Diagnostics are also available in the GUI. The build collects the installed
+engine, pillow_heif and send2trash and bundles settings, icon and ExifTool.
+The windowed executable is `dist\ChronoName\ChronoName.exe`. Optional skimage/SciPy
+remain excluded; OpenCV is not required. The script accepts extra PyInstaller
+arguments, including `--distpath` and `--workpath` to preserve an existing build.
 
 ## Pre production testing
 

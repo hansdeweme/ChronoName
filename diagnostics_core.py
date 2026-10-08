@@ -96,7 +96,7 @@ def _environment_checks() -> list[DiagnosticLine]:
         DiagnosticLine("Application directory", str(_application_dir())),
         _resource_exists_check("settings.json found", "settings.json"),
         _exiftool_check(),
-        _import_check("DedupTool import/version", "deduptool"),
+        _import_check("HdWDedupEngine version/path", "hdw_dedup_engine"),
         _import_check("Pillow available", "PIL.Image"),
         _heic_check(),
     ]
@@ -137,6 +137,8 @@ def _import_check(label: str, module_name: str) -> DiagnosticLine:
         root_module = importlib.import_module(module_name.split(".", 1)[0])
         version = getattr(root_module, "__version__", "") or getattr(module, "__version__", "")
         value = f"{module_name} {version}".strip()
+        if module_name == "hdw_dedup_engine":
+            value += f" ({module.__file__})"
         return DiagnosticLine(label, value)
     except Exception as exc:
         return DiagnosticLine(label, module_name, False, str(exc))

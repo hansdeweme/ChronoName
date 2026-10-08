@@ -1,6 +1,7 @@
 from pathlib import Path
 from tempfile import TemporaryDirectory
 import json
+import os
 import unittest
 from zoneinfo import ZoneInfo
 
@@ -524,10 +525,9 @@ class DuplicateScanSettingsTests(unittest.TestCase):
             scan = settings["scan"]
             self.assertIn("ChronoName Reports", scan["exclude_dirnames"])
             self.assertIn(QUARANTINE_FOLDER_NAME, scan["exclude_dirnames"])
-            self.assertIn(str(report_dir.resolve()), scan["exclude_dirpaths"])
-            self.assertIn(str(extra_exclude.resolve()), scan["exclude_dirpaths"])
+            self.assertIn(os.path.normcase(str(report_dir.resolve())), scan["exclude_roots"])
+            self.assertIn(os.path.normcase(str(extra_exclude.resolve())), scan["exclude_roots"])
 
 
 if __name__ == "__main__":
     unittest.main()
-
